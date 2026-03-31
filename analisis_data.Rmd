@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 1. Usa una expresión regular para buscar todos los ficheros de puntuaciones en la carpeta descomprimida (usa list.files)
 
--Con list.files() se listan los ficheros que concuerden con los parametros pasados: path = data (que esten en la carpeta data), pattern = \\.txt$ (que el nombre del fichero acabe con .txt), recursive = TRUE (que mire en subcarpetas de data), ignore.case = TRUE (que ignore si es mayúscula o minúscula)  
+  - Con list.files() se listan los ficheros que concuerden con los parametros pasados: path = data (que esten en la carpeta data), pattern = \\.txt$ (que el nombre del fichero acabe con .txt), recursive = TRUE (que mire en subcarpetas de data), ignore.case = TRUE (que ignore si es mayúscula o minúscula)  
 
 ```{r}
 
@@ -26,14 +26,60 @@ length(lista_fpuntos)
 
 2. Usa una expresión regular para buscar todos los ficheros con el justificante del curso. 
 
--Usamos lo mismo que arriba cambiando el pattern por pattern = certificate.*\\.pdf$ (que empiece con certificate, si tiene algo en medio da igual, pero tiene que acabar con .pdf)
+  - Usamos lo mismo que arriba cambiando el pattern por pattern = certificate.*\\.pdf$ (que empiece con certificate, si tiene algo en medio da igual, pero tiene que acabar con .pdf)
 
 ```{r}
 lista_fcert <- list.files(path = "data", pattern = "certificate.*\\.pdf$", recursive = TRUE, ignore.case = TRUE)
 
 length(lista_fcert)
+```
 
+3. Para cada una de las entregas realizadas debes extraer información para organizarla en un data frame
+
+- Extrae los apellidos del usuario de la ruta del fichero de puntuaciones (strsplit)
+
+  - He creado un bucle for en el cual cada i es un elemento de lista_fpuntos, aqui mediante strsplit divido en dos la ruta, los apellidos y el resto, despues selecciono los apellidos y los meto en un vector de apellidos.
+
+- Importa el fichero puntos.txt y extrae la puntuación obtenida (readlines)
+
+  - En el mismo bucle for he leido la primera linea de todos los ficheros de lista_fpuntos (que contiene sus rutas). Y los he metido en un vector de puntos. Aqui he tenido que modificar algunos ficheros manualmente y con gsub("[^0-9]") ya que borra todo el texto que no sea un numero del 1 al 9, ya que algunas personas no habian utilizado el formato adecuado.
+
+  
+```{r}
+
+vector_puntos <- c()
+vector_apellidos <- c()
+
+for (i in lista_fpuntos){
+  
+  ruta <- strsplit(i, ", ")
+  apellido <- ruta[[1]][1]
+  vector_apellidos <- append(vector_apellidos, values = apellido)
+  
+  puntos <- readLines(paste("data/", i, sep =""), warn = FALSE)
+  puntos <- gsub("[^0-9]", "", puntos)
+  vector_puntos <- append(vector_puntos, puntos[1])
+  
+}
 
 ```
+
+- ¿Todas las entregas usaron como nombre del fichero de puntos el indicado; puntos.txt ?¿cuántas variantes hay ?. ¿Todas las entregas contienen el fichero de puntos y el justificante de realización del curso ?
+
+  - Algunas personas usaron otro nombre, por ejemplo: puntosintermedio.txt, pero como sabía que todos los .txt serían esos los he intentado leer igual. Pero hay algunos que lo han entregado en formato pdf y esos no se pueden leer.
+  
+  - Como se puede ver en el chunk, solo 45 personas de 64 han puesto bien el nombre (exactamente puntos.txt), hay 19 variantes.
+  
+  - Cuento el numero de archivos que hay dentro de cada subcarpeta de la carpeta data (126), luego lo divido por 2 ya que deberia haber 2 ficheros en cada carpeta, y me da 63, como hay 64 carpetas, esto indica que alguien solo ha puesto un fichero, podria ser que alguien hubiese puesto mas de un fichero y mas personas solo hubiesen puesto solo 1, pero la respuesta seria la misma, no todas las personas han puesto los dos ficheros.
+
+```{r}
+length(list.files(path = "data", pattern = "puntos.txt", recursive = TRUE, ignore.case = TRUE))
+
+length(list.files(path = "data", recursive = TRUE))/2
+
+```
+
+
+
 
 
