@@ -11,4 +11,29 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Ejercicio: Corrige Data Camp tema 6
 
+1. Usa una expresión regular para buscar todos los ficheros de puntuaciones en la carpeta descomprimida (usa list.files)
+
+-Con list.files() se listan los ficheros que concuerden con los parametros pasados: path = data (que esten en la carpeta data), pattern = \\.txt$ (que el nombre del fichero acabe con .txt), recursive = TRUE (que mire en subcarpetas de data), ignore.case = TRUE (que ignore si es mayúscula o minúscula)  
+
+```{r}
+
+
+lista_fpuntos <- list.files(path = "data", pattern = "\\.txt$", recursive = TRUE, ignore.case = TRUE)
+
+length(lista_fpuntos)
+
+```
+
+2. Usa una expresión regular para buscar todos los ficheros con el justificante del curso. 
+
+-Usamos lo mismo que arriba cambiando el pattern por pattern = certificate.*\\.pdf$ (que empiece con certificate, si tiene algo en medio da igual, pero tiene que acabar con .pdf)
+
+```{r}
+lista_fcert <- list.files(path = "data", pattern = "certificate.*\\.pdf$", recursive = TRUE, ignore.case = TRUE)
+
+length(lista_fcert)
+
+
+```
+
 
