@@ -11,6 +11,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Ejercicio: Corrige Data Camp tema 6
 
+Librerias:
+```{r}
+library(openxlsx)
+library(dplyr)
+library(readxl)
+```
+
+
 0. Descomprime el fichero de entregas en una carpeta
 - Si no existe ningun archivo que termine con esa extension, se descomprime el archivo y se guarda en data.
 
@@ -107,10 +115,6 @@ Almacena el dataframe en un fichero excel llamado NotasRIntermedio.xlsx
 
   - Ordeno el dataframe por apellidos con arrange de la librería dplyr
 ```{r}
-
-library(openxlsx)
-library(dplyr)
-
 evalua_df <- data.frame(apellidos = vector_apellidos, puntos = as.numeric(vector_puntos_l), NomFile = vector_nomFich, Puntos = vector_puntos)
 
 evalua_df <- arrange(evalua_df, apellidos)
@@ -126,7 +130,6 @@ write.xlsx(evalua_df, "data/NotasRIntermedio.xlsx")
 - Con la libreria readxl importo el archivo xlsx en un data frame y utilizo left join, para unir los data frames por sus apellidos y que se guarden todos los registros de df_alumn. Además, la gente que ha enviado el DataCamp aparecen sus datos sobre el datacamp, si no lo han hecho aparece NA. Finalmente, exportamos este data frame a un archivo xlsx
 
 ```{r}
-library(readxl)
 df_alumn <- read_excel("data/AlumnosTD25_26.xlsx")
 
 df_unido <- left_join(df_alumn, evalua_df, by = c("Apellido(s)" = "apellidos"))
