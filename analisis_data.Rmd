@@ -44,22 +44,30 @@ length(lista_fcert)
 
   - En el mismo bucle for he leido la primera linea de todos los ficheros de lista_fpuntos (que contiene sus rutas). Y los he metido en un vector de puntos. Aqui he tenido que modificar algunos ficheros manualmente y con gsub("[^0-9]") ya que borra todo el texto que no sea un numero del 1 al 9, ya que algunas personas no habian utilizado el formato adecuado.
 
+  - He añadido la creación de otros vectores, destinados a estar en el data frame.
+
   
 ```{r}
-
 vector_puntos <- c()
+vector_puntos_l <- c()
 vector_apellidos <- c()
+vector_nomFich <- c()
 
 for (i in lista_fpuntos){
   
   ruta <- strsplit(i, ", ")
   apellido <- ruta[[1]][1]
-  vector_apellidos <- append(vector_apellidos, values = apellido)
+  vector_apellidos <- append(vector_apellidos, apellido)
+  
+  ruta2 <- strsplit(i, "/")
+  nom_fich <- ruta2[[1]][2]
+  vector_nomFich <- append(vector_nomFich, nom_fich)
   
   puntos <- readLines(paste("data/", i, sep =""), warn = FALSE)
-  puntos <- gsub("[^0-9]", "", puntos)
   vector_puntos <- append(vector_puntos, puntos[1])
   
+  puntos_l <- gsub("[^0-9]", "", puntos[1])
+  vector_puntos_l <- append(vector_puntos_l, puntos_l)
 }
 
 ```
@@ -78,6 +86,25 @@ length(list.files(path = "data", pattern = "puntos.txt", recursive = TRUE, ignor
 length(list.files(path = "data", recursive = TRUE))/2
 
 ```
+4. Crea un data frame (evalua_df) que contenga:
+
+- En la primera columna (apellidos) los apellidos del usuario
+- En la segunda (puntos) la puntuación obtenida. 
+- En la tercera columna el nombre del fichero usado para almacenar los puntos (NomFile)
+- En la cuarta el contenido del fichero puntos.txt  (Puntos) como cadena de texto.
+Almacena el dataframe en un fichero excel llamado NotasRIntermedio.xlsx 
+  - Creo el data frame con los vectores creados anteriormente como columnas. Luego, guardo el data frame como archivo .xlsx con la libreria openxlsx
+
+```{r}
+
+library(openxlsx)
+
+df_DC <- data.frame(apellidos = vector_apellidos, puntos = as.numeric(vector_puntos_l), NomFile = vector_nomFich, Puntos = vector_puntos)
+
+write.xlsx(df_DC, "data/NotasRIntermedio.xlsx")
+
+```
+
 
 
 
