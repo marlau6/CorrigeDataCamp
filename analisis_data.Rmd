@@ -11,6 +11,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Ejercicio: Corrige Data Camp tema 6
 
+0. Descomprime el fichero de entregas en una carpeta
+- Si no existe ningun archivo que termine con esa extension, se descomprime el archivo y se guarda en data.
+
+```{r}
+if (length(list.files(path = "data", pattern = "\\_assignsubmission_file$")) == 0){
+  unzip("2025-26 Tractament de les dades Gr.A-T (36423)-Tarea Intermediate R(Datacamp)-3281647.zip", exdir = "data")
+}
+```
+
+
 1. Usa una expresión regular para buscar todos los ficheros de puntuaciones en la carpeta descomprimida (usa list.files)
 
   - Con list.files() se listan los ficheros que concuerden con los parametros pasados: path = data (que esten en la carpeta data), pattern = \\.txt$ (que el nombre del fichero acabe con .txt), recursive = TRUE (que mire en subcarpetas de data), ignore.case = TRUE (que ignore si es mayúscula o minúscula)  
@@ -101,15 +111,29 @@ Almacena el dataframe en un fichero excel llamado NotasRIntermedio.xlsx
 library(openxlsx)
 library(dplyr)
 
-df_DC <- data.frame(apellidos = vector_apellidos, puntos = as.numeric(vector_puntos_l), NomFile = vector_nomFich, Puntos = vector_puntos)
+evalua_df <- data.frame(apellidos = vector_apellidos, puntos = as.numeric(vector_puntos_l), NomFile = vector_nomFich, Puntos = vector_puntos)
 
-df_DC <- arrange(df_DC, apellidos)
+evalua_df <- arrange(evalua_df, apellidos)
 
-head(df_DC, 5)
+head(evalua_df, 5)
 
-write.xlsx(df_DC, "data/NotasRIntermedio.xlsx")
+write.xlsx(evalua_df, "data/NotasRIntermedio.xlsx")
 
 ```
 
+5. Carga la información de los alumnos matriculados, incluidos en el fichero AlumnosTDXX_XX.xlsx en un data frame y combina la información con el data frame anterior (debes incluir algún identificador único, correo electróncio, ID) para asociar a cada usuario toda la información obtenida del análisis de las entregas. Guarda la información del data frame resultado de la combinación en AlumnosNotas.xlsx. Este fichero contiene a todos los alumnos matriculados y para los que realizaron la entrega de la tarea aparecerán las columnas  adicionales incluidas en el data frame evalua_df
+
+- Con la libreria readxl importo el archivo xlsx en un data frame y utilizo left join, para unir los data frames por sus apellidos y que se guarden todos los registros de df_alumn. Además, la gente que ha enviado el DataCamp aparecen sus datos sobre el datacamp, si no lo han hecho aparece NA. Finalmente, exportamos este data frame a un archivo xlsx
+
+```{r}
+library(readxl)
+df_alumn <- read_excel("data/AlumnosTD25_26.xlsx")
+
+df_unido <- left_join(df_alumn, evalua_df, by = c("Apellido(s)" = "apellidos"))
+
+head(df_unido, 5)
+
+write.xlsx(df_unido, "data/AlumnosNotas.xlsx")
+```
 
 
