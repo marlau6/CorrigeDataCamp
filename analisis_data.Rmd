@@ -95,18 +95,21 @@ length(list.files(path = "data", recursive = TRUE))/2
 Almacena el dataframe en un fichero excel llamado NotasRIntermedio.xlsx 
   - Creo el data frame con los vectores creados anteriormente como columnas. Luego, guardo el data frame como archivo .xlsx con la libreria openxlsx
 
+  - Ordeno el dataframe por apellidos con arrange de la librería dplyr
 ```{r}
 
 library(openxlsx)
+library(dplyr)
 
 df_DC <- data.frame(apellidos = vector_apellidos, puntos = as.numeric(vector_puntos_l), NomFile = vector_nomFich, Puntos = vector_puntos)
+
+df_DC <- arrange(df_DC, apellidos)
+
+head(df_DC, 5)
 
 write.xlsx(df_DC, "data/NotasRIntermedio.xlsx")
 
 ```
-
-
-
 
 
 
